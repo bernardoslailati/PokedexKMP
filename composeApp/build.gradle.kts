@@ -60,7 +60,7 @@ kotlin {
             implementation(libs.ktor.client.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kotlinx.coroutines.android)
-            api(libs.koin.android)
+            implementation(libs.koin.android)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -74,14 +74,14 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            api(libs.kotlinx.serialization)
+            implementation(libs.kotlinx.serialization)
             implementation(libs.bundles.ktor.common)
             implementation(libs.coil)
             implementation(libs.coil.network.ktor)
             implementation(libs.coil.compose.core)
             implementation(libs.coil.compose)
-            api(libs.koin.core)
-            api(libs.koin.test)
+            implementation(libs.koin.core)
+            implementation(libs.koin.test)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.view.model)
         }
