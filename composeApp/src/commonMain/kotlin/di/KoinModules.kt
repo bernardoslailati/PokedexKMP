@@ -1,8 +1,8 @@
 package di
 
-import common.network.service.PokemonApi
-import data.repository.PokemonRepositoryImpl
-import domain.repository.PokemonRepository
+import data.network.PokemonApi
+import data.repository.PokedexRepositoryImpl
+import domain.repository.PokedexRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.DEFAULT
@@ -13,9 +13,8 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import presentation.PokemonViewModel
+import presentation.PokedexViewModel
 
 val commonModule = module {
     single {
@@ -32,13 +31,13 @@ val commonModule = module {
     single<PokemonApi> {
         PokemonApi(client = get())
     }
-    single<PokemonRepository> {
-        PokemonRepositoryImpl(api = get())
+    single<PokedexRepository> {
+        PokedexRepositoryImpl(api = get())
     }
 }
 
 val viewModelModule = module {
-    viewModelOf(::PokemonViewModel)
+    viewModelOf(::PokedexViewModel)
 }
 
 fun initKoin() {

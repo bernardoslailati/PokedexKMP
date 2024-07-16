@@ -1,4 +1,4 @@
-package common.network.service
+package data.network
 
 import data.remote.model.PokemonApiModel
 import io.ktor.client.*

@@ -66,15 +66,13 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
         commonMain.dependencies {
-            implementation(libs.lifecycle.viewmodel.compose)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
             implementation(compose.ui)
-            implementation(libs.kotlinx.coroutines.core)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.kotlinx.serialization)
+            implementation(libs.androidx.navigation.compose)
             implementation(libs.bundles.ktor.common)
             implementation(libs.coil)
             implementation(libs.coil.network.ktor)
@@ -83,7 +81,11 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.test)
             implementation(libs.koin.compose)
+            implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.koin.compose.view.model)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization)
+            implementation(libs.kotlinx.datetime)
         }
         jsMain.dependencies {
             implementation(libs.ktor.client.js)
@@ -132,6 +134,7 @@ android {
         debugImplementation(compose.uiTooling)
     }
 }
+
 dependencies {
     implementation(libs.androidx.ui.tooling.preview.android)
 }

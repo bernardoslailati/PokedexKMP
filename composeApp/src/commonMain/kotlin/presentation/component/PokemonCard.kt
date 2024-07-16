@@ -1,6 +1,10 @@
 package presentation.component
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,9 +40,17 @@ import domain.extension.orEmpty
 import domain.model.PokemonModel
 import domain.model.PokemonType
 import org.jetbrains.compose.resources.painterResource
+import presentation.mapper.toPresentation
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun PokemonCard(modifier: Modifier = Modifier, pokemon: PokemonModel) {
+fun PokemonCard(
+    modifier: Modifier = Modifier,
+    pokemon: PokemonModel,
+    onPokemonClick: () -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
+) {
     fun getAsyncImageLoader(context: PlatformContext) =
         ImageLoader.Builder(context).memoryCachePolicy(CachePolicy.ENABLED).crossfade(true)
             .logger(DebugLogger()).build()
@@ -46,57 +58,70 @@ fun PokemonCard(modifier: Modifier = Modifier, pokemon: PokemonModel) {
     val platformContext = LocalPlatformContext.current
 
     Card(
-        modifier = modifier.fillMaxWidth(0.95f),
+        modifier = modifier.fillMaxWidth(0.95f).clickable { onPokemonClick() },
         elevation = 4.dp,
         shape = RoundedCornerShape(16.dp)
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth().height(200.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                painter = painterResource(
-                    PokemonType.fromType(pokemon.types.firstOrNull()?.replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase() else it.toString()
-                    }.orEmpty()).drawableResource
-                ),
-                contentDescription = "Pokemon Type Background Image",
-                contentScale = ContentScale.Crop
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+        with(sharedTransitionScope) {
+            Box(
+                modifier = Modifier.fillMaxWidth().height(200.dp),
+                contentAlignment = Alignment.Center
             ) {
-                AsyncImage(
-                    modifier = Modifier.size(180.dp),
-                    model = pokemon.imageUrl,
-                    contentDescription = "Pokemon Image",
-                    imageLoader = getAsyncImageLoader(platformContext)
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(
+                        PokemonType.fromType(pokemon.types.firstOrNull()?.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase() else it.toString()
+                        }.orEmpty()).drawableResource
+                    ),
+                    contentDescription = "Pokemon Type Background Image",
+                    contentScale = ContentScale.Crop
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(
-                        text = "#${pokemon.id.toString().padStart(3, '0')}",
-                        style = TextStyle.Default.copy(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Black,
-                            fontFamily = FontFamily.Default,
-                            color = Color.White,
-                            shadow = Shadow(offset = Offset(2f, 2f))
-                        )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AsyncImage(
+                        modifier = Modifier.size(180.dp).sharedBounds(
+                            rememberSharedContentState(key = "${pokemon.toPresentation().id}/image"),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        ),
+                        model = pokemon.imageUrl,
+                        contentDescription = "Pokemon Image",
+                        imageLoader = getAsyncImageLoader(platformContext)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = pokemon.name.uppercase(),
-                        style = TextStyle.Default.copy(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Black,
-                            fontFamily = FontFamily.Default,
-                            color = Color.White,
-                            shadow = Shadow(offset = Offset(2f, 2f))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        Text(
+                            modifier = Modifier.sharedBounds(
+                                rememberSharedContentState(key = "${pokemon.toPresentation().id}/id"),
+                                animatedVisibilityScope = animatedVisibilityScope
+                            ),
+                            text = "#${pokemon.id.toString().padStart(3, '0')}",
+                            style = TextStyle.Default.copy(
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = FontFamily.Default,
+                                color = Color.White,
+                                shadow = Shadow(offset = Offset(2f, 2f))
+                            )
                         )
-                    )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            modifier = Modifier.sharedBounds(
+                                rememberSharedContentState(key = "${pokemon.toPresentation().id}/name"),
+                                animatedVisibilityScope = animatedVisibilityScope
+                            ),
+                            text = pokemon.name.uppercase(),
+                            style = TextStyle.Default.copy(
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = FontFamily.Default,
+                                color = Color.White,
+                                shadow = Shadow(offset = Offset(2f, 2f))
+                            )
+                        )
+                    }
                 }
             }
         }

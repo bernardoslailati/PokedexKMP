@@ -1,14 +1,14 @@
 package data.repository
 
-import common.network.service.PokemonApi
-import common.network.service.PokemonApi.Companion.TOTAL_FIRST_GENERATION_POKEMONS
+import data.network.PokemonApi
+import data.network.PokemonApi.Companion.TOTAL_FIRST_GENERATION_POKEMONS
 import data.remote.mapper.toDomain
 import domain.model.PokemonModel
-import domain.repository.PokemonRepository
+import domain.repository.PokedexRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class PokemonRepositoryImpl(private val api: PokemonApi) : PokemonRepository {
+class PokedexRepositoryImpl(private val api: PokemonApi) : PokedexRepository {
 
     override suspend fun fetchPokemons(): Flow<List<PokemonModel>> = flow {
         try {
